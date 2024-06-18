@@ -1,16 +1,23 @@
 import express from "express"
 import {
   addLivestock,
+  allLivestock,
+  deathLivestock,
+  deleteLivestock,
   detailLivestock,
-  editQuantity,
 } from "./controller/livestockController.js"
-import { displayLivestock } from "./controller/display.js"
+import { login, register } from "./controller/farmController.js"
+import { verifyToken } from "./middleware/verifyToken.js"
 
 const route = express.Router()
 
-route.get("/", displayLivestock)
-route.get("/detailLivestock/:name", detailLivestock)
-route.post("/addLivestock", addLivestock)
-route.patch("/editQuantity", editQuantity)
+route.post("/register", register)
+route.post("/login", login)
+
+route.get("/", verifyToken, allLivestock)
+route.get("/detailLivestock/:name", verifyToken, detailLivestock)
+route.post("/addLivestock", verifyToken, addLivestock)
+route.patch("/deathLivestock", verifyToken, deathLivestock)
+route.delete("/deleteLivestock", verifyToken, deleteLivestock)
 
 export default route
