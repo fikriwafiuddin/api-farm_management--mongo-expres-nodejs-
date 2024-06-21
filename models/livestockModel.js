@@ -5,17 +5,61 @@ const livestockSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  quantityMale: {
-    type: Number,
-    required: true,
+  male: {
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      default: 0,
+    },
+    feed: {
+      type: Number,
+      default: 0, // Feed consumed in grams per day
+    },
   },
-  quantityFemale: {
-    type: Number,
-    required: true,
+  female: {
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      default: 0,
+    },
+    feed: {
+      type: Number,
+      default: 0, // Feed consumed in grams per day
+    },
   },
-  quantityChild: {
-    type: Number,
-    required: true,
+  child: {
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      default: 0,
+    },
+    feed: {
+      type: Number,
+      default: 0, // Feed consumed in grams per day
+    },
+  },
+  product: {
+    name: {
+      type: String,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      default: 0,
+    },
+    price: {
+      type: Number,
+      default: 0,
+    },
   },
   quantityDead: {
     type: Number,
@@ -25,7 +69,7 @@ const livestockSchema = new mongoose.Schema({
 
 // Menambahkan virtual field 'total'
 livestockSchema.virtual("total").get(function () {
-  return this.quantityMale + this.quantityFemale + this.quantityChild
+  return this.male.quantity + this.female.quantity + this.child.quantity
 })
 
 // Mengaktifkan virtual fields agar termasuk dalam toJSON dan toObject output

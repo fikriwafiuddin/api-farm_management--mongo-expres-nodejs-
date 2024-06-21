@@ -2,11 +2,11 @@ import Farm from "../models/farmModel.js"
 import Livestock from "../models/livestockModel.js"
 
 export const addLivestock = async (req, res) => {
-  const { name, quantityMale, quantityFemale, quantityChild } = req.body
+  const { name, male, female, child, product } = req.body // type of male, female, child, and product is object
   const farm = req.farm
   try {
-    if (!name || !quantityMale || !quantityFemale || !quantityChild) {
-      return res.status(400).json("Please add filds!")
+    if (!name || !male || !female || !child || !product) {
+      return res.status(400).json("Please add fields!")
     }
 
     const livestockIsExist = await Livestock.findOne({ name })
@@ -16,9 +16,10 @@ export const addLivestock = async (req, res) => {
 
     await Livestock.create({
       name,
-      quantityMale,
-      quantityFemale,
-      quantityChild,
+      male,
+      female,
+      child,
+      product,
     })
 
     await Farm.findOneAndUpdate(
@@ -28,9 +29,9 @@ export const addLivestock = async (req, res) => {
         $set: {
           totalLivestock:
             farm.totalLivestock +
-            parseInt(quantityMale) +
-            parseInt(quantityFemale) +
-            parseInt(quantityChild),
+            parseInt(male.quantity) +
+            parseInt(female.quantity) +
+            parseInt(child.quantity),
         },
       }
     )
@@ -68,6 +69,75 @@ export const detailLivestock = async (req, res) => {
   } catch (error) {
     res.status(400)
     console.log(error)
+  }
+}
+
+export const editPrice = async (req, res) => {
+  const { name, ...data } = req.body
+  console.log(data)
+  try {
+    const livestock = await Livestock.findOne({ name })
+    if (!livestock) {
+      return res.status(404).json("Livestock not found")
+    }
+
+    for (const key in data) {
+      if (!Number.isFinite(data[key].price)) {
+        return res.status(400).json({ error: `${key} must be a number` })
+      }
+    }
+
+    if (
+      ("male" in data && data.male.price == null) ||
+      ("female" in data && data.female.price == null) ||
+      ("child" in data && data.child.price == null)
+    ) {
+      return res.status(400).json("Please add fields correctly!")
+    }
+
+    for (const key in data) {
+      console.log(key)
+      livestock[key].price = Number(data[key].price)
+    }
+    await livestock.save()
+    return res.status(200).json("Success")
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json("System error")
+  }
+}
+
+export const editFeed = async (req, res) => {
+  const { name, ...data } = req.body
+  try {
+    const livestock = await Livestock.findOne({ name })
+    if (!livestock) {
+      return res.status(404).json("Livestock not found")
+    }
+
+    for (const key in data) {
+      if (!Number.isFinite(data[key].feed)) {
+        return res.status(400).json({ error: `${key} must be a number` })
+      }
+    }
+
+    if (
+      ("male" in data && data.male.feed == null) ||
+      ("female" in data && data.female.feed == null) ||
+      ("child" in data && data.child.feed == null)
+    ) {
+      return res.status(400).json("Please add fields correctly!")
+    }
+
+    for (const key in data) {
+      console.log(key)
+      livestock[key].feed = Number(data[key].feed)
+    }
+    await livestock.save()
+    return res.status(200).json("Success")
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json("System error")
   }
 }
 

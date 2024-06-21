@@ -5,6 +5,8 @@ import {
   deathLivestock,
   deleteLivestock,
   detailLivestock,
+  editFeed,
+  editPrice,
 } from "./controller/livestockController.js"
 import { login, register } from "./controller/farmController.js"
 import { verifyToken } from "./middleware/verifyToken.js"
@@ -17,6 +19,8 @@ route.post("/login", login)
 route.get("/", verifyToken, allLivestock)
 route.get("/detailLivestock/:name", verifyToken, detailLivestock)
 route.post("/addLivestock", verifyToken, addLivestock)
+route.patch("/editPrice", verifyToken, editPrice)
+route.patch("/editFeed", verifyToken, editFeed)
 route.patch("/deathLivestock", verifyToken, deathLivestock)
 route.delete("/deleteLivestock", verifyToken, deleteLivestock)
 
